@@ -1,0 +1,121 @@
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+R1
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+hostname R1
+!
+mpls ip
+mpls label range 500 600
+!
+interface Loopback10
+ description --- connection iBGP to R4
+ ip address 57.0.0.1 255.255.255.255
+!
+interface Ethernet0/0
+ description --- to MPLS interface
+ ip address 10.0.0.1 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+router ospf 1
+ passive-interface default
+ no passive-interface Ethernet0/0
+ network 57.0.0.1 0.0.0.0 area 0
+!
+!
+end
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!R2
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+hostname R2
+!
+mpls ip
+mpls label range 700 800
+!
+interface Ethernet0/0
+ description --- to R1 MPLS
+ ip address 10.0.0.2 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+interface Ethernet0/1
+ description --- to R3
+ ip address 10.0.0.5 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+interface Ethernet0/2
+ no ip address
+ shutdown
+!
+interface Ethernet0/3
+ no ip address
+ shutdown
+!
+router ospf 1
+ passive-interface default
+ no passive-interface Ethernet0/0
+ no passive-interface Ethernet0/1
+!
+!
+end
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!R3
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+hostname R3
+!
+mpls ip
+mpls label range 900 1000
+!
+!
+interface Ethernet0/0
+ description --- to R2
+ ip address 10.0.0.6 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+interface Ethernet0/1
+ description --- to R4
+ ip address 10.0.0.9 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+router ospf 1
+ passive-interface default
+ no passive-interface Ethernet0/0
+ no passive-interface Ethernet0/1
+!
+!
+end
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!R4
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+hostname R4
+!
+mpls ip
+mpls label range 1100 1200
+!
+interface Loopback10
+ description --- connection BGP to R1
+ ip address 57.0.0.2 255.255.255.255
+!
+interface Ethernet0/0
+ description --- to R3
+ ip address 10.0.0.10 255.255.255.252
+ ip ospf 1 area 0
+ mpls ip
+!
+router ospf 1
+ passive-interface default
+ no passive-interface Ethernet0/0
+ network 57.0.0.2 0.0.0.0 area 0
+!
+!
+end
+
+
+
